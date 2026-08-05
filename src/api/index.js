@@ -4,10 +4,19 @@ const db = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Capture startup time for uptime calculation
+const startupTime = Date.now();
+
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+// GET /healthz — health check with uptime in seconds
+app.get('/healthz', (_req, res) => {
+  const uptimeSeconds = Math.floor((Date.now() - startupTime) / 1000);
+  res.json({ status: 'ok', uptime: uptimeSeconds });
 });
 
 // GET /tasks — list all tasks
@@ -51,3 +60,4 @@ app.patch('/tasks/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
+
