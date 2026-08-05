@@ -62,9 +62,40 @@ The API is not exposed directly, but you can reach it through the web container 
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/health` | Health check |
+| GET | `/healthz` | Health check with database connectivity and uptime |
 | GET | `/tasks` | List all tasks |
 | POST | `/tasks` | Create a task (`{ "title": "..." }`) |
 | PATCH | `/tasks/:id` | Update a task (`{ "completed": true }` or `{ "title": "..." }`) |
+
+#### `/healthz` endpoint
+
+The `/healthz` endpoint is designed for uptime monitoring and load balancer health checks. It verifies both API availability and database connectivity.
+
+**Request:**
+```bash
+curl http://localhost:3001/healthz
+```
+
+**Response (success — 200):**
+```json
+{
+  "status": "ok",
+  "uptime": 42.123
+}
+```
+
+**Response (failure — 503):**
+```json
+{
+  "status": "error",
+  "message": "connect ECONNREFUSED 127.0.0.1:5432"
+}
+```
+
+The endpoint returns:
+- **200 OK** if the API is running and the database is reachable
+- **503 Service Unavailable** if the database connection fails
+- `uptime` — process uptime in seconds (useful for monitoring)
 
 ## Project structure
 
@@ -130,3 +161,4 @@ DATABASE_URL=postgres://app:app@localhost:5432/app npx node-pg-migrate down
 ```
 
 When running via Docker Compose the `migrate` service handles this automatically on startup.
+
