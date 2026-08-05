@@ -67,6 +67,8 @@ The API is not exposed directly, but you can reach it through the web container 
 | POST | `/tasks` | Create a task (`{ "title": "..." }`) |
 | PATCH | `/tasks/:id` | Update a task (`{ "completed": true }` or `{ "title": "..." }`) |
 
+**Version endpoint:** The `/version` endpoint returns the API version from `package.json` in JSON format: `{ "version": "X.Y.Z" }`. This is useful for monitoring deployments and verifying which version of the API is running.
+
 ## Project structure
 
 ```
