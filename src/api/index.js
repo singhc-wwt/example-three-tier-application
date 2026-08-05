@@ -10,6 +10,16 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// GET /healthz — health check with database connectivity
+app.get('/healthz', async (_req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', uptime: process.uptime() });
+  } catch (error) {
+    res.status(503).json({ status: 'error', message: error.message });
+  }
+});
+
 // GET /tasks — list all tasks
 app.get('/tasks', async (_req, res) => {
   const { rows } = await db.query('SELECT * FROM tasks ORDER BY created_at ASC');
@@ -51,3 +61,4 @@ app.patch('/tasks/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
+
