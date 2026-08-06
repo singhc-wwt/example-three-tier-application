@@ -165,3 +165,85 @@ DATABASE_URL=postgres://app:app@localhost:5432/app npx node-pg-migrate down
 
 When running via Docker Compose the `migrate` service handles this automatically on startup.
 
+## Troubleshooting
+
+### Port already in use
+
+**Problem:** `docker compose up` fails with "port 3000 is already allocated" or similar error.
+
+**Solution:** Either stop the process using the port or map to a different port:
+```bash
+# Option 1: Stop the conflicting service
+lsof -i :3000  # Find the process
+kill -9 <PID>
+
+# Option 2: Use a different port in docker-compose.yml
+# Change "3000:3000" to "3001:3000" (or any available port)
+```
+
+### Database connection errors
+
+**Problem:** API or web container fails to start with "connection refused" or "ECONNREFUSED" errors.
+
+**Solution:** Ensure the PostgreSQL service is healthy before other services start:
+```bash
+# Check service status
+docker compose ps
+
+# View logs for the postgres service
+docker compose logs postgres
+
+# Restart the entire stack
+docker compose down -v
+docker compose up --build
+```
+
+### Migrations fail to run
+
+**Problem:** The `migrate` service exits with an error, preventing the API from starting.
+
+**Solution:** Check the migration logs and verify the database schema:
+```bash
+# View migration logs
+docker compose logs migrate
+
+# Manually run migrations (if needed)
+docker compose exec postgres psql -U app -d app -c "\dt"  # List tables
+
+# Reset and retry
+docker compose down -v
+docker compose up --build
+```
+
+### Frontend cannot reach the API
+
+**Problem:** The web frontend shows errors like "Failed to fetch" or "Cannot reach API".
+
+**Solution:** Verify the `API_URL` environment variable and network connectivity:
+```bash
+# Check the API_URL in docker-compose.yml (should be http://api:3001)
+# Verify the API is running
+docker compose logs api
+
+# Test API connectivity from the web container
+docker compose exec web curl http://api:3001/health
+```
+
+### Terraform deployment fails
+
+**Problem:** `terraform apply` fails with authentication or resource errors.
+
+**Solution:** Verify GCP credentials and project configuration:
+```bash
+# Ensure you're authenticated with GCP
+gcloud auth application-default login
+
+# Verify the project ID
+gcloud config get-value project
+
+# Check Terraform state
+cd src/infrastructure
+terraform state list
+terraform state show <resource_name>
+```
+
