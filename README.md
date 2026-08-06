@@ -65,6 +65,40 @@ The API is not exposed directly, but you can reach it through the web container 
 | GET | `/tasks` | List all tasks |
 | POST | `/tasks` | Create a task (`{ "title": "..." }`) |
 | PATCH | `/tasks/:id` | Update a task (`{ "completed": true }` or `{ "title": "..." }`) |
+| DELETE | `/tasks/:id` | Delete a task by ID |
+
+#### DELETE /tasks/:id
+
+Deletes a task by its ID.
+
+**Request:**
+- Path parameter: `id` (integer) — the task ID to delete
+
+**Response:**
+- **200 OK** — Task successfully deleted; returns the deleted task object
+- **404 Not Found** — Task with the given ID does not exist
+
+**Example:**
+```bash
+curl -X DELETE http://localhost:3001/tasks/1
+```
+
+**Response (200):**
+```json
+{
+  "id": 1,
+  "title": "Buy groceries",
+  "completed": false,
+  "created_at": "2024-01-15T10:30:00.000Z"
+}
+```
+
+**Response (404):**
+```json
+{
+  "error": "Not found"
+}
+```
 
 ## Project structure
 
@@ -130,3 +164,4 @@ DATABASE_URL=postgres://app:app@localhost:5432/app npx node-pg-migrate down
 ```
 
 When running via Docker Compose the `migrate` service handles this automatically on startup.
+
