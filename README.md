@@ -100,6 +100,22 @@ curl -X DELETE http://localhost:3001/tasks/1
 }
 ```
 
+## Testing
+
+To run tests for the API and web frontend:
+
+```bash
+# Run tests in the API
+cd src/api
+npm test
+
+# Run tests in the web frontend
+cd src/web
+npm test
+```
+
+Tests are configured in each service's `package.json`. Add test files alongside your source code and update the test scripts as needed.
+
 ## Project structure
 
 ```
