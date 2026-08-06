@@ -1,4 +1,4 @@
-import { getTasks, createTask, toggleTask } from './actions';
+import { getTasks, createTask, toggleTask, deleteTask } from './actions';
 
 export default async function Home() {
   const tasks = await getTasks();
@@ -68,6 +68,16 @@ export default async function Home() {
               >
                 {task.title}
               </span>
+              <button
+                formAction={async () => {
+                  'use server';
+                  await deleteTask(task.id);
+                }}
+                className="ml-auto px-3 py-1 text-sm rounded bg-red-500 dark:bg-red-600 text-white hover:bg-red-600 dark:hover:bg-red-700 transition-colors"
+                aria-label="Delete task"
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
@@ -81,3 +91,4 @@ export default async function Home() {
     </div>
   );
 }
+
